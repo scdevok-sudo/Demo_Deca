@@ -167,6 +167,53 @@ export function estadoEmpleado(empleado, asignaciones, cursos) {
   }
 }
 
+/**
+ * Módulo 9: reporte mensual para YPF. Junta, para un mes (formato
+ * 'YYYY-MM'), todas las capacitaciones que se completaron ese mes —
+ * aprobadas o no — agrupadas por tema, con la nómina de quién la rindió.
+ *
+ * Se arma 100% a partir de `asignaciones.fechaCompletado`, así que un mes en
+ * curso (todavía incompleto) devuelve lo que haya hasta hoy sin problema —
+ * es la misma colección que ya alimenta certificados y vencimientos, no se
+ * agrega ningún dato nuevo al modelo.
+ */
+export function reporteMensual(mesISO, asignaciones, cursos, empleados) {
+  const delMes = asignaciones.filter((a) => a.estado === 'completado' && mismoMes(a.fechaCompletado, `${mesISO}-01`))
+
+  const porTema = new Map()
+  delMes.forEach((a) => {
+    const curso = cursos.find((c) => c.id === a.cursoId)
+    const empleado = empleados.find((e) => e.id === a.empleadoId)
+    if (!curso || !empleado) return
+    if (!porTema.has(curso.id)) porTema.set(curso.id, { curso, filas: [] })
+    porTema.get(curso.id).filas.push({
+      asignacion: a,
+      empleado,
+      numeroRegistro: a.certificadoId ?? a.id,
+    })
+  })
+
+  const dictados = [...porTema.values()]
+    .map((grupo) => ({
+      ...grupo,
+      filas: grupo.filas.sort((a, b) => a.empleado.nombre.localeCompare(b.empleado.nombre)),
+      fechaDesde: grupo.filas.map((f) => f.asignacion.fechaCompletado).sort()[0],
+      fechaHasta: grupo.filas.map((f) => f.asignacion.fechaCompletado).sort().slice(-1)[0],
+      aprobados: grupo.filas.filter((f) => f.asignacion.aprobado).length,
+      desaprobados: grupo.filas.filter((f) => !f.asignacion.aprobado).length,
+    }))
+    .sort((a, b) => a.curso.nombre.localeCompare(b.curso.nombre))
+
+  return {
+    mes: mesISO,
+    dictados,
+    totalDictados: dictados.length,
+    totalPersonas: delMes.length,
+    totalAprobados: delMes.filter((a) => a.aprobado).length,
+    totalDesaprobados: delMes.filter((a) => !a.aprobado).length,
+  }
+}
+
 // ------------------------------------------------------------- INSPECCIÓN --
 
 export function inspeccionesDe(equipoId, inspecciones) {

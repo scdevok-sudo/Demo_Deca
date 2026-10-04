@@ -10,6 +10,7 @@ import Puestos from './pages/Puestos'
 import CatalogoCapacitaciones from './pages/CatalogoCapacitaciones'
 import PlanAnual from './pages/PlanAnual'
 import Vencimientos from './pages/Vencimientos'
+import ReporteMensual from './pages/ReporteMensual'
 import Equipos from './pages/Equipos'
 import EquipoDetalle from './pages/EquipoDetalle'
 import EquiposQR from './pages/EquiposQR'
@@ -144,6 +145,14 @@ export default function App() {
           element={
             <SoloStaff>
               <Vencimientos />
+            </SoloStaff>
+          }
+        />
+        <Route
+          path="/reporte-mensual"
+          element={
+            <SoloStaff>
+              <ReporteMensual />
             </SoloStaff>
           }
         />

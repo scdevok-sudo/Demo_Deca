@@ -184,3 +184,8 @@ export const IcoCalendario = ico(
   'M3 10h18M8 2v4M16 2v4M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01',
   <rect x="3" y="4" width="18" height="18" rx="2" key="r" />
 )
+export const IcoReporte = ico(
+  'M9 17v-5M13 17v-9M17 17v-3',
+  <path d="M5 3h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" key="b" />
+)
+export const IcoDescarga = ico('M12 3v12m0 0-4-4m4 4 4-4M4 19h16')
