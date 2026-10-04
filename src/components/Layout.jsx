@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import { EMPRESA, PRODUCTO } from '../config/empresa'
 import { useApp } from '../store/AppStore'
 import LogoEmpresa from './LogoEmpresa'
@@ -74,13 +74,17 @@ function claseNav({ isActive }) {
 
 export default function Layout() {
   const { sesion, empleadoActual, cerrarSesion } = useApp()
-  const navigate = useNavigate()
   const items = NAV[sesion.rol] ?? []
   const esOperario = sesion.rol === 'operario'
 
+  // No navega acá: solo cierra la sesión. Igual que al entrar (ver
+  // SeleccionRol.jsx), es `Protegido` en App.jsx el que reacciona al cambio
+  // de `sesion.rol` y manda a "/" — así hay un solo lugar disparando la
+  // navegación, en vez de uno explícito acá compitiendo con el reactivo de
+  // `Protegido` (eso era justo la causa de la carrera que mandaba a veces a
+  // la página vieja en vez de volver al selector de cuentas).
   function salir() {
     cerrarSesion()
-    navigate('/', { replace: true })
   }
 
   return (

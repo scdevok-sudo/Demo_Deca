@@ -4,7 +4,7 @@
 //  así los cambios que se hagan durante la reunión sobreviven a un refresh.
 // ============================================================================
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { estadoInicial } from '../data/seed'
 import { seguimientoHasta } from '../data/ops'
 import { calcularKPIs } from '../lib/calculos'
@@ -65,11 +65,20 @@ export function AppProvider({ children }) {
 
   // ------------------------------------------------------------ sesión ----
 
+  // Marca que el próximo "sin sesión" que vea `Protegido` (en App.jsx) viene
+  // de un cierre de sesión deliberado (botón "Cambiar de rol"), no de que
+  // alguien cayó sin loguearse a una URL protegida. Es un ref (no estado) a
+  // propósito: `cerrarSesion` necesita dejar la marca ANTES de que se dispare
+  // el redirect reactivo de `Protegido`, y un ref se escribe en el momento,
+  // sin esperar al próximo render. Ver el comentario en `Protegido`.
+  const logoutDeliberadoRef = useRef(false)
+
   const iniciarSesion = useCallback((rol, empleadoId = null) => {
     setSesion({ rol, empleadoId })
   }, [])
 
   const cerrarSesion = useCallback(() => {
+    logoutDeliberadoRef.current = true
     setSesion({ rol: null, empleadoId: null })
   }, [])
 
@@ -566,6 +575,7 @@ export function AppProvider({ children }) {
       empleadoActual,
       iniciarSesion,
       cerrarSesion,
+      logoutDeliberadoRef,
       crearEmpleado,
       actualizarEmpleado,
       cambiarEstadoEmpleado,
@@ -596,6 +606,7 @@ export function AppProvider({ children }) {
       empleadoActual,
       iniciarSesion,
       cerrarSesion,
+      logoutDeliberadoRef,
       crearEmpleado,
       actualizarEmpleado,
       cambiarEstadoEmpleado,

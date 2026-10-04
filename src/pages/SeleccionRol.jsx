@@ -1,35 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { EMPRESA, PRODUCTO } from '../config/empresa'
 import LogoEmpresa from './../components/LogoEmpresa'
 import PieMarca from './../components/PieMarca'
-import { Avatar, IcoCurso, IcoPanel, IcoUsuario } from '../components/ui'
+import { Avatar } from '../components/ui'
 import { useApp } from '../store/AppStore'
-import { estadoEmpleado } from '../lib/calculos'
-
-const OPCIONES = [
-  {
-    clave: 'gerente',
-    nombre: 'Gerente',
-    descripcion: 'Dashboard de cumplimiento, estado de personal y equipos.',
-    Icono: IcoPanel,
-    destino: '/dashboard',
-  },
-  {
-    clave: 'capacitador',
-    nombre: 'Capacitador',
-    descripcion: 'Cargar cursos, asignarlos y ver resultados de las evaluaciones.',
-    Icono: IcoCurso,
-    destino: '/capacitaciones',
-  },
-  {
-    clave: 'operario',
-    nombre: 'Operario',
-    descripcion: 'Tomar los cursos asignados y registrar inspecciones de equipos.',
-    Icono: IcoUsuario,
-    destino: '/mis-cursos',
-  },
-]
 
 // --------------------------------------------------- cuentas simuladas ----
 // Solo para que el flujo de "Continuar con Google" tenga nombres y mails
@@ -74,15 +49,9 @@ function IcoGoogle({ size = 18 }) {
 }
 
 export default function SeleccionRol() {
-  const { iniciarSesion, empleados, asignaciones, cursos, reiniciarDemo } = useApp()
-  const [paso, setPaso] = useState('inicio') // inicio | google-cargando | google-cuentas | manual | manual-operario
+  const { iniciarSesion, empleados, reiniciarDemo } = useApp()
+  const [paso, setPaso] = useState('inicio') // inicio | google-cargando | google-cuentas
   const [confirmarReinicio, setConfirmarReinicio] = useState(false)
-  const navigate = useNavigate()
-  const location = useLocation()
-
-  // Si llegó escaneando el QR de un equipo, después de elegir el rol se vuelve
-  // a esa pantalla en lugar de ir al inicio.
-  const destinoPendiente = location.state?.desde
 
   useEffect(() => {
     if (paso !== 'google-cargando') return
@@ -90,33 +59,23 @@ export default function SeleccionRol() {
     return () => clearTimeout(t)
   }, [paso])
 
-  function entrar(rol, destino, empleadoId = null) {
+  // No navega acá: solo marca la sesión. App.jsx es quien decide a dónde ir
+  // una vez que `sesion.rol` está puesto — ver el comentario en App.jsx
+  // sobre por qué (evita una carrera entre el login y la navegación que
+  // podía mandar a la pantalla por defecto del rol en vez de a la ruta
+  // pendiente, por ejemplo al volver de escanear el QR de un equipo).
+  function entrar(rol, empleadoId = null) {
     iniciarSesion(rol, empleadoId)
-    navigate(destinoPendiente ?? destino)
-  }
-
-  function elegir(op) {
-    if (op.clave === 'operario') {
-      setPaso('manual-operario')
-      return
-    }
-    entrar(op.clave, op.destino)
   }
 
   const cuentas = [
-    { ...CUENTA_GERENTE, email: slugEmail(CUENTA_GERENTE.nombre), destino: '/dashboard', empleadoId: null },
-    {
-      ...CUENTA_CAPACITADOR,
-      email: slugEmail(CUENTA_CAPACITADOR.nombre),
-      destino: '/capacitaciones',
-      empleadoId: null,
-    },
+    { ...CUENTA_GERENTE, email: slugEmail(CUENTA_GERENTE.nombre), empleadoId: null },
+    { ...CUENTA_CAPACITADOR, email: slugEmail(CUENTA_CAPACITADOR.nombre), empleadoId: null },
     ...empleados.map((emp) => ({
       rol: 'operario',
       nombre: emp.nombre,
       email: slugEmail(emp.nombre),
       etiqueta: `Operario · ${emp.puesto}`,
-      destino: '/mis-cursos',
       empleadoId: emp.id,
     })),
   ]
@@ -136,13 +95,6 @@ export default function SeleccionRol() {
             <p className="text-sm text-slate-500 mt-1">Sistema de Gestión Integrado</p>
           </div>
 
-          {destinoPendiente && paso !== 'google-cuentas' && (
-            <div className="mb-5 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-center">
-              <p className="text-sm text-brand-900 font-medium">Identificate para continuar</p>
-              <p className="text-xs text-brand-700 mt-0.5 font-mono">{destinoPendiente}</p>
-            </div>
-          )}
-
           {/* --------------------------------------------------- inicio -- */}
           {paso === 'inicio' && (
             <>
@@ -153,30 +105,6 @@ export default function SeleccionRol() {
                 <IcoGoogle size={20} />
                 Continuar con Google
               </button>
-
-              <div className="flex items-center gap-3 my-5">
-                <div className="h-px flex-1 bg-slate-200" />
-                <span className="text-[11px] uppercase tracking-wide text-slate-400">o acceso directo</span>
-                <div className="h-px flex-1 bg-slate-200" />
-              </div>
-
-              <div className="grid grid-cols-1 gap-2.5">
-                {OPCIONES.map((op) => (
-                  <button
-                    key={op.clave}
-                    onClick={() => elegir(op)}
-                    className="card p-3.5 text-left flex items-center gap-3 hover:border-brand-400 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/40 group"
-                  >
-                    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-100 group-hover:bg-brand-700 group-hover:text-white transition-colors">
-                      <op.Icono size={18} />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-semibold text-slate-900">{op.nombre}</span>
-                      <span className="block text-xs text-slate-500 truncate">{op.descripcion}</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
 
               <p className="text-center text-xs text-slate-400 mt-5">
                 ¿Sos empleado y querés ver tus certificados sin iniciar sesión?{' '}
@@ -212,7 +140,7 @@ export default function SeleccionRol() {
                 {cuentas.map((c) => (
                   <button
                     key={c.email}
-                    onClick={() => entrar(c.rol, c.destino, c.empleadoId)}
+                    onClick={() => entrar(c.rol, c.empleadoId)}
                     className="w-full flex items-center gap-3 px-5 py-3 text-left hover:bg-slate-50 transition-colors"
                   >
                     <Avatar nombre={c.nombre} />
@@ -233,53 +161,6 @@ export default function SeleccionRol() {
                 </button>
               </div>
             </div>
-          )}
-
-          {/* -------------------------------------------- manual-operario -- */}
-          {paso === 'manual-operario' && (
-            <>
-              <p className="text-center text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">
-                ¿Quién sos?
-              </p>
-              <div className="card divide-y divide-slate-200 overflow-hidden">
-                {empleados.map((emp) => {
-                  const est = estadoEmpleado(emp, asignaciones, cursos)
-                  const pendientes = asignaciones.filter(
-                    (a) => a.empleadoId === emp.id && a.estado === 'pendiente'
-                  ).length
-                  return (
-                    <button
-                      key={emp.id}
-                      onClick={() => entrar('operario', '/mis-cursos', emp.id)}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
-                    >
-                      <Avatar nombre={emp.nombre} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-900 truncate">{emp.nombre}</p>
-                        <p className="text-xs text-slate-500">
-                          {emp.puesto} · Legajo {emp.legajo}
-                        </p>
-                      </div>
-                      {pendientes > 0 && (
-                        <span className="shrink-0 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5">
-                          {pendientes} pendiente{pendientes > 1 ? 's' : ''}
-                        </span>
-                      )}
-                      {pendientes === 0 && est.estado.clave === 'vencido' && (
-                        <span className="shrink-0 rounded-full bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5">
-                          Vencido
-                        </span>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-              <div className="text-center mt-4">
-                <button onClick={() => setPaso('inicio')} className="btn-ghost text-sm">
-                  ← Volver
-                </button>
-              </div>
-            </>
           )}
 
           <p className="text-center text-xs text-slate-400 mt-8">
