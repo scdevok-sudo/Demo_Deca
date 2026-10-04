@@ -180,3 +180,7 @@ export const IcoCatalogo = ico(
   'M8 7h8M8 11h8M8 15h5',
   <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5.5A1.5 1.5 0 0 1 4 18.5z" key="b" />
 )
+export const IcoCalendario = ico(
+  'M3 10h18M8 2v4M16 2v4M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01',
+  <rect x="3" y="4" width="18" height="18" rx="2" key="r" />
+)

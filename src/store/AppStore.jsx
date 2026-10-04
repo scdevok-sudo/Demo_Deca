@@ -386,6 +386,63 @@ export function AppProvider({ children }) {
     [datos]
   )
 
+  // -------------------------------------------------- plan anual (F5) -----
+  // Módulo 5: qué tema corresponde dictar cada mes. Una fila por
+  // (año, mes, tema) para poder agregar/quitar de a uno. Modificar el plan
+  // de un mes nunca toca lo ya dictado (asignaciones/certificados) — son
+  // colecciones separadas, así que esto es automático por diseño.
+
+  const agregarTemaAlPlan = useCallback(
+    (anio, mes, temaId) => {
+      const yaEsta = datos.planAnual.some((p) => p.anio === anio && p.mes === mes && p.temaId === temaId)
+      if (yaEsta) return null
+      const nuevo = {
+        id: nuevoId('PLN', datos.planAnual),
+        anio,
+        mes,
+        temaId,
+        creadoEl: hoyISO(),
+        modificadoEl: null,
+      }
+      setDatos({ ...datos, planAnual: [...datos.planAnual, nuevo] })
+      return nuevo
+    },
+    [datos]
+  )
+
+  const quitarTemaDelPlan = useCallback(
+    (id) => {
+      setDatos({ ...datos, planAnual: datos.planAnual.filter((p) => p.id !== id) })
+    },
+    [datos]
+  )
+
+  /** Copia todas las asignaciones de un año a otro (sin duplicar si ya existen). */
+  const copiarPlanDesde = useCallback(
+    (anioDestino, anioOrigen) => {
+      const origen = datos.planAnual.filter((p) => p.anio === anioOrigen)
+      const existentes = new Set(
+        datos.planAnual.filter((p) => p.anio === anioDestino).map((p) => `${p.mes}-${p.temaId}`)
+      )
+      const nuevos = []
+      origen
+        .filter((p) => !existentes.has(`${p.mes}-${p.temaId}`))
+        .forEach((p) => {
+          nuevos.push({
+            id: nuevoId('PLN', [...datos.planAnual, ...nuevos]),
+            anio: anioDestino,
+            mes: p.mes,
+            temaId: p.temaId,
+            creadoEl: hoyISO(),
+            modificadoEl: null,
+          })
+        })
+      if (nuevos.length) setDatos({ ...datos, planAnual: [...datos.planAnual, ...nuevos] })
+      return { copiadas: nuevos.length }
+    },
+    [datos]
+  )
+
   // --------------------------------------------------------- inspección ---
 
   const guardarInspeccion = useCallback(
@@ -523,6 +580,9 @@ export function AppProvider({ children }) {
       reiniciarIntento,
       actualizarTema,
       cambiarEstadoTema,
+      agregarTemaAlPlan,
+      quitarTemaDelPlan,
+      copiarPlanDesde,
       guardarInspeccion,
       guardarOps,
       crearComunicacion,
@@ -550,6 +610,9 @@ export function AppProvider({ children }) {
       reiniciarIntento,
       actualizarTema,
       cambiarEstadoTema,
+      agregarTemaAlPlan,
+      quitarTemaDelPlan,
+      copiarPlanDesde,
       guardarInspeccion,
       guardarOps,
       crearComunicacion,

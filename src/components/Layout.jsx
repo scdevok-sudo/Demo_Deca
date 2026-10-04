@@ -5,6 +5,7 @@ import LogoEmpresa from './LogoEmpresa'
 import PieMarca from './PieMarca'
 import {
   Avatar,
+  IcoCalendario,
   IcoCatalogo,
   IcoCert,
   IcoChat,
@@ -35,6 +36,7 @@ const NAV = {
     { to: '/equipos', texto: 'Equipos', Icono: IcoEquipo },
     { to: '/capacitaciones', texto: 'Capacitaciones', Icono: IcoCurso },
     { to: '/catalogo', texto: 'Catálogo', Icono: IcoCatalogo },
+    { to: '/plan-anual', texto: 'Plan Anual', Icono: IcoCalendario },
     { to: '/ops', texto: 'OPS', Icono: IcoOjo },
     { to: '/comunicaciones', texto: 'Consultas', Icono: IcoChat },
     { to: '/historial', texto: 'Historial', Icono: IcoHistorial },
@@ -44,6 +46,7 @@ const NAV = {
     { to: '/puestos', texto: 'Puestos', Icono: IcoPuesto },
     { to: '/capacitaciones', texto: 'Capacitaciones', Icono: IcoCurso },
     { to: '/catalogo', texto: 'Catálogo', Icono: IcoCatalogo },
+    { to: '/plan-anual', texto: 'Plan Anual', Icono: IcoCalendario },
     { to: '/equipos/qr', texto: 'Códigos QR', Icono: IcoQR },
     { to: '/ops', texto: 'OPS', Icono: IcoOjo },
     { to: '/comunicaciones', texto: 'Consultas', Icono: IcoChat },

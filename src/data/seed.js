@@ -10,6 +10,7 @@ import { CURSOS_SEED } from './cursos'
 import { OPS_SEED } from './ops'
 import { COMUNICACIONES_SEED } from './comunicaciones'
 import { PUESTOS_SEED } from './puestos'
+import { PLAN_ANUAL_SEED } from './planAnual'
 
 // ------------------------------------------------------------- EMPLEADOS ---
 export const EMPLEADOS_SEED = [
@@ -494,6 +495,7 @@ export function estadoInicial() {
     puestos: PUESTOS_SEED,
     equipos: EQUIPOS_SEED,
     cursos: CURSOS_SEED,
+    planAnual: PLAN_ANUAL_SEED,
     asignaciones: ASIGNACIONES_SEED,
     inspecciones: INSPECCIONES_SEED,
     ops: OPS_SEED,
