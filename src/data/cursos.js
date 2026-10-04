@@ -5,6 +5,14 @@ export const CURSOS_SEED = [
   {
     id: 'CUR-01',
     nombre: '10 Reglas de Oro',
+    // Catálogo (Fase 1, módulo 4): tipo, puestos a los que aplica (array
+    // vacío = todos los puestos), y estado. vigenciaMeses ya cumple el rol
+    // de "periodicidad de vencimiento" que pide la especificación.
+    tipo: 'Obligatorio',
+    puestos: [],
+    activo: true,
+    creadoEl: '2016-02-01',
+    modificadoEl: null,
     descripcion:
       'Reglas de cumplimiento obligatorio cuya violación implica riesgo de vida. Aplican a todo el personal propio y contratista dentro de obra.',
     categoria: 'Seguridad general',
@@ -80,6 +88,11 @@ export const CURSOS_SEED = [
   {
     id: 'CUR-02',
     nombre: 'Uso y mantenimiento de EPP',
+    tipo: 'Obligatorio',
+    puestos: [],
+    activo: true,
+    creadoEl: '2016-02-01',
+    modificadoEl: null,
     descripcion:
       'Selección, colocación, verificación y conservación de los elementos de protección personal según la tarea y el riesgo asociado.',
     categoria: 'Elementos de protección',
@@ -145,6 +158,13 @@ export const CURSOS_SEED = [
   {
     id: 'CUR-03',
     nombre: 'Trabajo en altura y uso de arnés',
+    tipo: 'Obligatorio',
+    // Ejemplo real de restricción por puesto (llamada del 25/09): el
+    // Ayudante no está habilitado para trabajo en altura por su cuenta.
+    puestos: ['Supervisor', 'Oficial', 'Medio Oficial'],
+    activo: true,
+    creadoEl: '2018-05-10',
+    modificadoEl: null,
     descripcion:
       'Sistemas de detención de caídas, puntos de anclaje, factor de caída y distancia libre. Incluye inspección de arnés y cabo de vida.',
     categoria: 'Trabajo en altura',
@@ -218,6 +238,11 @@ export const CURSOS_SEED = [
   {
     id: 'CUR-04',
     nombre: 'Manejo de extintores',
+    tipo: 'Electivo',
+    puestos: [],
+    activo: true,
+    creadoEl: '2019-03-01',
+    modificadoEl: null,
     descripcion:
       'Clases de fuego, selección del agente extintor, técnica de uso y límites de la intervención sobre un principio de incendio.',
     categoria: 'Emergencias',

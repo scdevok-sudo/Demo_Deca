@@ -195,8 +195,13 @@ export default function CursoDetalle() {
         <div className="space-y-5">
           <Card titulo="Ficha">
             <dl className="text-sm space-y-2.5">
+              <Fila t="Tipo" v={curso.tipo ?? 'Obligatorio'} />
+              <Fila
+                t="Aplica a"
+                v={!curso.puestos || curso.puestos.length === 0 ? 'Todos los puestos' : curso.puestos.join(', ')}
+              />
               <Fila t="Duración" v={`${curso.duracionMin} minutos`} />
-              <Fila t="Vigencia" v={`${curso.vigenciaMeses} meses`} />
+              <Fila t="Vigencia" v={curso.vigenciaMeses ? `${curso.vigenciaMeses} meses` : 'No vence'} />
               <Fila t="Aprobación" v={`${curso.puntajeMinimo}% mínimo`} />
               <Fila t="Preguntas" v={curso.preguntas.length} />
               <Fila t="Creado por" v={curso.creadoPor ?? '—'} />

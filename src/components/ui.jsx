@@ -176,3 +176,7 @@ export const IcoPuesto = ico(
   'M16 21V8a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v13',
   <rect x="2" y="8" width="20" height="13" rx="2" key="r" />
 )
+export const IcoCatalogo = ico(
+  'M8 7h8M8 11h8M8 15h5',
+  <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5.5A1.5 1.5 0 0 1 4 18.5z" key="b" />
+)

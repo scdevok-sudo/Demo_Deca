@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Personal from './pages/Personal'
 import PersonalDetalle from './pages/PersonalDetalle'
 import Puestos from './pages/Puestos'
+import CatalogoCapacitaciones from './pages/CatalogoCapacitaciones'
 import Equipos from './pages/Equipos'
 import EquipoDetalle from './pages/EquipoDetalle'
 import EquiposQR from './pages/EquiposQR'
@@ -110,6 +111,14 @@ export default function App() {
           element={
             <SoloStaff>
               <Puestos />
+            </SoloStaff>
+          }
+        />
+        <Route
+          path="/catalogo"
+          element={
+            <SoloStaff>
+              <CatalogoCapacitaciones />
             </SoloStaff>
           }
         />

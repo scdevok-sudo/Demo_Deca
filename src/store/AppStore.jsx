@@ -359,6 +359,33 @@ export function AppProvider({ children }) {
     [datos]
   )
 
+  // ---------------------------------------------- catálogo de temas (F4) --
+  // Módulo 4: clasificación de cada curso existente (tipo, puestos a los
+  // que corresponde, periodicidad de vencimiento, duración, activo). No
+  // crea cursos desde cero — eso sigue siendo "Nuevo curso" en
+  // Capacitaciones, con su material y evaluación (módulo 6, sin tocar) —
+  // acá se administra la metadata del catálogo sobre los cursos ya creados.
+
+  const actualizarTema = useCallback(
+    (id, cambios) => {
+      setDatos({
+        ...datos,
+        cursos: datos.cursos.map((c) => (c.id === id ? { ...c, ...cambios, modificadoEl: hoyISO() } : c)),
+      })
+    },
+    [datos]
+  )
+
+  const cambiarEstadoTema = useCallback(
+    (id, activo) => {
+      setDatos({
+        ...datos,
+        cursos: datos.cursos.map((c) => (c.id === id ? { ...c, activo, modificadoEl: hoyISO() } : c)),
+      })
+    },
+    [datos]
+  )
+
   // --------------------------------------------------------- inspección ---
 
   const guardarInspeccion = useCallback(
@@ -494,6 +521,8 @@ export function AppProvider({ children }) {
       asignarCurso,
       completarCurso,
       reiniciarIntento,
+      actualizarTema,
+      cambiarEstadoTema,
       guardarInspeccion,
       guardarOps,
       crearComunicacion,
@@ -519,6 +548,8 @@ export function AppProvider({ children }) {
       asignarCurso,
       completarCurso,
       reiniciarIntento,
+      actualizarTema,
+      cambiarEstadoTema,
       guardarInspeccion,
       guardarOps,
       crearComunicacion,
