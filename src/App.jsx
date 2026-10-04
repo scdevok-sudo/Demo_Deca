@@ -4,6 +4,8 @@ import Layout from './components/Layout'
 
 import SeleccionRol from './pages/SeleccionRol'
 import Dashboard from './pages/Dashboard'
+import Personal from './pages/Personal'
+import PersonalDetalle from './pages/PersonalDetalle'
 import Equipos from './pages/Equipos'
 import EquipoDetalle from './pages/EquipoDetalle'
 import EquiposQR from './pages/EquiposQR'
@@ -49,6 +51,16 @@ function SoloConHistorial({ children }) {
   return children
 }
 
+/**
+ * Personal (módulo 2) es solo para Gerente y Capacitador — el Operario no
+ * administra ni consulta el listado completo de personal.
+ */
+function SoloStaff({ children }) {
+  const { sesion } = useApp()
+  if (sesion.rol === 'operario') return <Navigate to="/mis-cursos" replace />
+  return children
+}
+
 export default function App() {
   const { sesion } = useApp()
 
@@ -67,6 +79,31 @@ export default function App() {
         }
       >
         <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route
+          path="/personal"
+          element={
+            <SoloStaff>
+              <Personal />
+            </SoloStaff>
+          }
+        />
+        <Route
+          path="/personal/nuevo"
+          element={
+            <SoloStaff>
+              <PersonalDetalle />
+            </SoloStaff>
+          }
+        />
+        <Route
+          path="/personal/:id"
+          element={
+            <SoloStaff>
+              <PersonalDetalle />
+            </SoloStaff>
+          }
+        />
 
         <Route path="/equipos" element={<Equipos />} />
         <Route path="/equipos/qr" element={<EquiposQR />} />

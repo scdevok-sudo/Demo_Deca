@@ -20,6 +20,9 @@ export const EMPLEADOS_SEED = [
     dni: '24.567.890',
     ingreso: '2016-03-14',
     obra: 'Obra Norte',
+    activo: true,
+    creadoEl: '2016-03-14',
+    modificadoEl: null,
   },
   {
     id: 'EMP-02',
@@ -29,6 +32,9 @@ export const EMPLEADOS_SEED = [
     dni: '28.104.332',
     ingreso: '2018-07-02',
     obra: 'Obra Norte',
+    activo: true,
+    creadoEl: '2018-07-02',
+    modificadoEl: null,
   },
   {
     id: 'EMP-03',
@@ -38,6 +44,9 @@ export const EMPLEADOS_SEED = [
     dni: '30.882.117',
     ingreso: '2019-01-21',
     obra: 'Obra Sur',
+    activo: true,
+    creadoEl: '2019-01-21',
+    modificadoEl: null,
   },
   {
     id: 'EMP-04',
@@ -47,6 +56,9 @@ export const EMPLEADOS_SEED = [
     dni: '33.451.209',
     ingreso: '2021-05-10',
     obra: 'Obra Norte',
+    activo: true,
+    creadoEl: '2021-05-10',
+    modificadoEl: null,
   },
   {
     id: 'EMP-05',
@@ -56,6 +68,9 @@ export const EMPLEADOS_SEED = [
     dni: '35.209.884',
     ingreso: '2022-02-28',
     obra: 'Obra Sur',
+    activo: true,
+    creadoEl: '2022-02-28',
+    modificadoEl: null,
   },
   {
     id: 'EMP-06',
@@ -65,6 +80,9 @@ export const EMPLEADOS_SEED = [
     dni: '42.118.760',
     ingreso: '2024-09-16',
     obra: 'Obra Norte',
+    activo: true,
+    creadoEl: '2024-09-16',
+    modificadoEl: null,
   },
 ]
 

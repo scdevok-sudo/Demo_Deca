@@ -14,6 +14,7 @@ import {
   IcoPanel,
   IcoQR,
   IcoSalir,
+  IcoUsuario,
 } from './ui'
 
 export const ROLES = {
@@ -27,6 +28,7 @@ export const ROLES = {
 const NAV = {
   gerente: [
     { to: '/dashboard', texto: 'Dashboard', Icono: IcoPanel },
+    { to: '/personal', texto: 'Personal', Icono: IcoUsuario },
     { to: '/equipos', texto: 'Equipos', Icono: IcoEquipo },
     { to: '/capacitaciones', texto: 'Capacitaciones', Icono: IcoCurso },
     { to: '/ops', texto: 'OPS', Icono: IcoOjo },
@@ -34,6 +36,7 @@ const NAV = {
     { to: '/historial', texto: 'Historial', Icono: IcoHistorial },
   ],
   capacitador: [
+    { to: '/personal', texto: 'Personal', Icono: IcoUsuario },
     { to: '/capacitaciones', texto: 'Capacitaciones', Icono: IcoCurso },
     { to: '/equipos/qr', texto: 'Códigos QR', Icono: IcoQR },
     { to: '/ops', texto: 'OPS', Icono: IcoOjo },

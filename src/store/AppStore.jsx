@@ -219,6 +219,104 @@ export function AppProvider({ children }) {
     [datos]
   )
 
+  // ------------------------------------------------------------- personal --
+  // Módulo 2 de la especificación: Gestión de Personal. El Gerente tiene
+  // CRUD completo; el Capacitador solo consulta (se controla en la UI, no
+  // acá). Nunca se borra un empleado: se desactiva, igual que un tema o un
+  // puesto, para no perder el historial de capacitaciones asociado.
+
+  const crearEmpleado = useCallback(
+    (empleado) => {
+      const id = nuevoId('EMP', datos.empleados)
+      const nuevo = {
+        legajo: '',
+        obra: '',
+        ...empleado,
+        id,
+        activo: true,
+        creadoEl: hoyISO(),
+        modificadoEl: null,
+      }
+      setDatos({ ...datos, empleados: [...datos.empleados, nuevo] })
+      return nuevo
+    },
+    [datos]
+  )
+
+  const actualizarEmpleado = useCallback(
+    (id, cambios) => {
+      setDatos({
+        ...datos,
+        empleados: datos.empleados.map((e) =>
+          e.id === id ? { ...e, ...cambios, modificadoEl: hoyISO() } : e
+        ),
+      })
+    },
+    [datos]
+  )
+
+  /** Desactivar/reactivar. Nunca se elimina físicamente un registro. */
+  const cambiarEstadoEmpleado = useCallback(
+    (id, activo) => {
+      setDatos({
+        ...datos,
+        empleados: datos.empleados.map((e) =>
+          e.id === id ? { ...e, activo, modificadoEl: hoyISO() } : e
+        ),
+      })
+    },
+    [datos]
+  )
+
+  /**
+   * Importación masiva (CSV ya parseado a filas {dni, nombre, puesto,
+   * legajo, ingreso, obra}). No escribe nada si no hay al menos una fila
+   * válida. Devuelve el resumen que pide la especificación: procesados,
+   * importados y rechazados con motivo.
+   */
+  const importarEmpleados = useCallback(
+    (filas) => {
+      const dnisExistentes = new Set(datos.empleados.map((e) => e.dni))
+      const vistos = new Set()
+      const nuevos = []
+      const rechazados = []
+
+      filas.forEach((fila, i) => {
+        const numeroFila = i + 1
+        const dni = (fila.dni || '').trim()
+        const nombre = (fila.nombre || '').trim()
+        const puesto = (fila.puesto || '').trim()
+
+        if (!dni || !nombre || !puesto) {
+          rechazados.push({ fila: numeroFila, motivo: 'Faltan campos obligatorios (DNI, nombre o puesto).' })
+          return
+        }
+        if (dnisExistentes.has(dni) || vistos.has(dni)) {
+          rechazados.push({ fila: numeroFila, motivo: `DNI duplicado (${dni}).` })
+          return
+        }
+        vistos.add(dni)
+        nuevos.push({
+          id: nuevoId('EMP', [...datos.empleados, ...nuevos]),
+          dni,
+          nombre,
+          puesto,
+          legajo: (fila.legajo || '').trim(),
+          ingreso: fila.ingreso?.trim() || hoyISO(),
+          obra: (fila.obra || '').trim(),
+          activo: true,
+          creadoEl: hoyISO(),
+          modificadoEl: null,
+        })
+      })
+
+      if (nuevos.length) setDatos({ ...datos, empleados: [...datos.empleados, ...nuevos] })
+
+      return { procesados: filas.length, importados: nuevos.length, rechazados }
+    },
+    [datos]
+  )
+
   // --------------------------------------------------------- inspección ---
 
   const guardarInspeccion = useCallback(
@@ -342,6 +440,10 @@ export function AppProvider({ children }) {
       empleadoActual,
       iniciarSesion,
       cerrarSesion,
+      crearEmpleado,
+      actualizarEmpleado,
+      cambiarEstadoEmpleado,
+      importarEmpleados,
       crearCurso,
       crearCursoYAsignar,
       asignarCurso,
@@ -360,6 +462,10 @@ export function AppProvider({ children }) {
       empleadoActual,
       iniciarSesion,
       cerrarSesion,
+      crearEmpleado,
+      actualizarEmpleado,
+      cambiarEstadoEmpleado,
+      importarEmpleados,
       crearCurso,
       crearCursoYAsignar,
       asignarCurso,
