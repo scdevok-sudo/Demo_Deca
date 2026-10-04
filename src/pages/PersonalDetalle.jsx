@@ -9,11 +9,27 @@ export default function PersonalDetalle() {
   const { id } = useParams()
   const esNuevo = !id
   const navigate = useNavigate()
-  const { empleados, asignaciones, cursos, sesion, crearEmpleado, actualizarEmpleado, cambiarEstadoEmpleado } =
-    useApp()
+  const {
+    empleados,
+    puestos,
+    asignaciones,
+    cursos,
+    sesion,
+    crearEmpleado,
+    actualizarEmpleado,
+    cambiarEstadoEmpleado,
+  } = useApp()
 
   const puedeEditar = sesion.rol === 'gerente'
   const existente = useMemo(() => empleados.find((e) => e.id === id), [empleados, id])
+
+  // Puestos activos + el puesto actual de la persona aunque esté desactivado,
+  // para no perder de vista un dato histórico al editar un registro viejo.
+  const opcionesPuesto = useMemo(() => {
+    const activos = puestos.filter((p) => p.activo !== false).map((p) => p.nombre)
+    if (existente?.puesto && !activos.includes(existente.puesto)) return [...activos, existente.puesto]
+    return activos
+  }, [puestos, existente])
 
   const [nombre, setNombre] = useState(existente?.nombre ?? '')
   const [dni, setDni] = useState(existente?.dni ?? '')
@@ -157,17 +173,22 @@ export default function PersonalDetalle() {
               <label className="label" htmlFor="puesto">
                 Puesto
               </label>
-              <input
+              <select
                 id="puesto"
                 value={puesto}
                 onChange={(e) => setPuesto(e.target.value)}
                 disabled={!puedeEditar}
-                placeholder="Ej.: Oficial"
                 className="input"
-              />
+              >
+                <option value="">Seleccioná un puesto…</option>
+                {opcionesPuesto.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
               <p className="text-[11px] text-slate-400 mt-1">
-                Por ahora es texto libre — cuando armemos el catálogo de puestos (Fase 3) esto pasa a ser una
-                lista.
+                Catálogo administrado en <strong>Puestos y tipos de personal</strong>.
               </p>
             </div>
             <div>

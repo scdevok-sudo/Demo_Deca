@@ -172,3 +172,7 @@ export const IcoSalir = ico('M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5
 export const IcoBuscar = ico('M21 21l-4.3-4.3', <circle cx="11" cy="11" r="7" key="c" />)
 export const IcoOjo = ico('M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z', <circle cx="12" cy="12" r="3" key="c" />)
 export const IcoChat = ico('M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.9-.9L3 21l1.9-5A8.4 8.4 0 0 1 12 3.5a8.4 8.4 0 0 1 9 8z')
+export const IcoPuesto = ico(
+  'M16 21V8a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v13',
+  <rect x="2" y="8" width="20" height="13" rx="2" key="r" />
+)

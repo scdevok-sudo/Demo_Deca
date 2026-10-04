@@ -317,6 +317,48 @@ export function AppProvider({ children }) {
     [datos]
   )
 
+  // -------------------------------------------------------------- puestos --
+  // Módulo 3: catálogo de puestos de trabajo. Mismo patrón que Personal:
+  // el Gerente administra, nunca se borra (se desactiva), y un puesto
+  // inactivo sigue visible en los registros históricos que ya lo usan.
+
+  const crearPuesto = useCallback(
+    (puesto) => {
+      const id = nuevoId('PUE', datos.puestos)
+      const nuevo = {
+        descripcion: '',
+        ...puesto,
+        id,
+        activo: true,
+        creadoEl: hoyISO(),
+        modificadoEl: null,
+      }
+      setDatos({ ...datos, puestos: [...datos.puestos, nuevo] })
+      return nuevo
+    },
+    [datos]
+  )
+
+  const actualizarPuesto = useCallback(
+    (id, cambios) => {
+      setDatos({
+        ...datos,
+        puestos: datos.puestos.map((p) => (p.id === id ? { ...p, ...cambios, modificadoEl: hoyISO() } : p)),
+      })
+    },
+    [datos]
+  )
+
+  const cambiarEstadoPuesto = useCallback(
+    (id, activo) => {
+      setDatos({
+        ...datos,
+        puestos: datos.puestos.map((p) => (p.id === id ? { ...p, activo, modificadoEl: hoyISO() } : p)),
+      })
+    },
+    [datos]
+  )
+
   // --------------------------------------------------------- inspección ---
 
   const guardarInspeccion = useCallback(
@@ -444,6 +486,9 @@ export function AppProvider({ children }) {
       actualizarEmpleado,
       cambiarEstadoEmpleado,
       importarEmpleados,
+      crearPuesto,
+      actualizarPuesto,
+      cambiarEstadoPuesto,
       crearCurso,
       crearCursoYAsignar,
       asignarCurso,
@@ -466,6 +511,9 @@ export function AppProvider({ children }) {
       actualizarEmpleado,
       cambiarEstadoEmpleado,
       importarEmpleados,
+      crearPuesto,
+      actualizarPuesto,
+      cambiarEstadoPuesto,
       crearCurso,
       crearCursoYAsignar,
       asignarCurso,

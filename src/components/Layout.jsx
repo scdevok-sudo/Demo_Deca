@@ -12,6 +12,7 @@ import {
   IcoHistorial,
   IcoOjo,
   IcoPanel,
+  IcoPuesto,
   IcoQR,
   IcoSalir,
   IcoUsuario,
@@ -29,6 +30,7 @@ const NAV = {
   gerente: [
     { to: '/dashboard', texto: 'Dashboard', Icono: IcoPanel },
     { to: '/personal', texto: 'Personal', Icono: IcoUsuario },
+    { to: '/puestos', texto: 'Puestos', Icono: IcoPuesto },
     { to: '/equipos', texto: 'Equipos', Icono: IcoEquipo },
     { to: '/capacitaciones', texto: 'Capacitaciones', Icono: IcoCurso },
     { to: '/ops', texto: 'OPS', Icono: IcoOjo },
@@ -37,6 +39,7 @@ const NAV = {
   ],
   capacitador: [
     { to: '/personal', texto: 'Personal', Icono: IcoUsuario },
+    { to: '/puestos', texto: 'Puestos', Icono: IcoPuesto },
     { to: '/capacitaciones', texto: 'Capacitaciones', Icono: IcoCurso },
     { to: '/equipos/qr', texto: 'Códigos QR', Icono: IcoQR },
     { to: '/ops', texto: 'OPS', Icono: IcoOjo },

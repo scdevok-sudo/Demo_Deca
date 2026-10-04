@@ -6,6 +6,7 @@ import SeleccionRol from './pages/SeleccionRol'
 import Dashboard from './pages/Dashboard'
 import Personal from './pages/Personal'
 import PersonalDetalle from './pages/PersonalDetalle'
+import Puestos from './pages/Puestos'
 import Equipos from './pages/Equipos'
 import EquipoDetalle from './pages/EquipoDetalle'
 import EquiposQR from './pages/EquiposQR'
@@ -101,6 +102,14 @@ export default function App() {
           element={
             <SoloStaff>
               <PersonalDetalle />
+            </SoloStaff>
+          }
+        />
+        <Route
+          path="/puestos"
+          element={
+            <SoloStaff>
+              <Puestos />
             </SoloStaff>
           }
         />

@@ -9,6 +9,7 @@ import { itemsPlanos } from './checklists'
 import { CURSOS_SEED } from './cursos'
 import { OPS_SEED } from './ops'
 import { COMUNICACIONES_SEED } from './comunicaciones'
+import { PUESTOS_SEED } from './puestos'
 
 // ------------------------------------------------------------- EMPLEADOS ---
 export const EMPLEADOS_SEED = [
@@ -490,6 +491,7 @@ export const INSPECCIONES_SEED = [
 export function estadoInicial() {
   return {
     empleados: EMPLEADOS_SEED,
+    puestos: PUESTOS_SEED,
     equipos: EQUIPOS_SEED,
     cursos: CURSOS_SEED,
     asignaciones: ASIGNACIONES_SEED,
