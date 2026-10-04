@@ -78,6 +78,53 @@ export function estadoAsignacion(asignacion, curso) {
   return 'al_dia'
 }
 
+/** Temas obligatorios activos que le corresponden a un empleado según su puesto. */
+export function temasQueCorrespondenA(empleado, cursos) {
+  return cursos.filter((c) => {
+    if (c.activo === false) return false
+    if ((c.tipo ?? 'Obligatorio') !== 'Obligatorio') return false
+    const aplicaATodos = !c.puestos || c.puestos.length === 0
+    return aplicaATodos || c.puestos.includes(empleado.puesto)
+  })
+}
+
+/**
+ * Módulo 8: panel de vencimientos. Para cada persona activa y cada tema
+ * obligatorio que le corresponde según su puesto (módulo 4), calcula su
+ * situación a partir de la última capacitación aprobada — o de la ausencia
+ * de una, que cuenta como el caso más urgente ('sin_capacitar'). Devuelve
+ * solo lo que necesita atención (vencido, por vencer o sin capacitar): la
+ * lista completa de capacitaciones al día ya se ve en Mis cursos /
+ * Capacitaciones, este panel es específicamente la alerta.
+ */
+export function panelVencimientos(empleados, cursos, asignaciones) {
+  const filas = []
+  empleados
+    .filter((e) => e.activo !== false)
+    .forEach((empleado) => {
+      temasQueCorrespondenA(empleado, cursos).forEach((tema) => {
+        const aprobadas = asignaciones
+          .filter((a) => a.empleadoId === empleado.id && a.cursoId === tema.id && a.aprobado && a.fechaCompletado)
+          .sort((a, b) => String(b.fechaCompletado).localeCompare(String(a.fechaCompletado)))
+        const ultima = aprobadas[0] ?? null
+
+        let situacion = 'sin_capacitar'
+        let vence = null
+        if (ultima) {
+          vence = vencimientoCapacitacion(ultima, tema)
+          const dias = diasDesdeHoy(vence)
+          if (dias < 0) situacion = 'vencido'
+          else if (dias <= DIAS_AVISO_CAPACITACION) situacion = 'por_vencer'
+          else situacion = 'al_dia'
+        }
+
+        if (situacion === 'al_dia') return
+        filas.push({ empleado, tema, situacion, vence, ultima })
+      })
+    })
+  return filas
+}
+
 /**
  * Estado consolidado de un empleado. Manda la peor situación:
  * vencido > pendiente > por vencer > al día.

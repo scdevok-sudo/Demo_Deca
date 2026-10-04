@@ -9,6 +9,7 @@ import PersonalDetalle from './pages/PersonalDetalle'
 import Puestos from './pages/Puestos'
 import CatalogoCapacitaciones from './pages/CatalogoCapacitaciones'
 import PlanAnual from './pages/PlanAnual'
+import Vencimientos from './pages/Vencimientos'
 import Equipos from './pages/Equipos'
 import EquipoDetalle from './pages/EquipoDetalle'
 import EquiposQR from './pages/EquiposQR'
@@ -135,6 +136,14 @@ export default function App() {
           element={
             <SoloStaff>
               <PlanAnual />
+            </SoloStaff>
+          }
+        />
+        <Route
+          path="/vencimientos"
+          element={
+            <SoloStaff>
+              <Vencimientos />
             </SoloStaff>
           }
         />
