@@ -19,6 +19,7 @@ import MisCursos from './pages/MisCursos'
 import TomarCurso from './pages/TomarCurso'
 import Certificado from './pages/Certificado'
 import MisCertificados from './pages/MisCertificados'
+import ConsultaCertificados from './pages/ConsultaCertificados'
 import InspeccionSelector from './pages/InspeccionSelector'
 import InspeccionForm from './pages/InspeccionForm'
 import Historial from './pages/Historial'
@@ -73,6 +74,12 @@ export default function App() {
         path="/"
         element={sesion.rol ? <Navigate to={INICIO[sesion.rol] ?? '/dashboard'} replace /> : <SeleccionRol />}
       />
+
+      {/* Módulo 7: consulta pública de certificados, sin login — fuera del
+          Protegido a propósito (incluye el link que abre el QR de cada
+          certificado). */}
+      <Route path="/certificados" element={<ConsultaCertificados />} />
+      <Route path="/certificado/:asignacionId" element={<Certificado />} />
 
       <Route
         element={
@@ -143,7 +150,6 @@ export default function App() {
         <Route path="/mis-cursos" element={<MisCursos />} />
         <Route path="/mis-certificados" element={<MisCertificados />} />
         <Route path="/curso/:asignacionId" element={<TomarCurso />} />
-        <Route path="/certificado/:asignacionId" element={<Certificado />} />
 
         <Route path="/inspeccion" element={<InspeccionSelector />} />
         <Route path="/inspeccion/:equipoId" element={<InspeccionForm />} />

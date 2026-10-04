@@ -3,9 +3,13 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useApp } from '../store/AppStore'
 import { EMPRESA } from '../config/empresa'
 import LogoEmpresa from '../components/LogoEmpresa'
+import PaginaPublica from '../components/PaginaPublica'
 import { Card, IcoImprimir, IcoVolver, Vacio } from '../components/ui'
 import { vencimientoCapacitacion } from '../lib/calculos'
 import { fmtCorta, fmtLarga } from '../lib/fechas'
+
+// Ruta pública (módulo 7): no requiere login — es la que abre el QR de
+// verificación de cada certificado y la que linkea la consulta por DNI.
 
 export default function Certificado() {
   const { asignacionId } = useParams()
@@ -18,17 +22,19 @@ export default function Certificado() {
 
   if (!asignacion || !curso || !empleado || !asignacion.aprobado) {
     return (
-      <Card>
-        <Vacio
-          titulo="Certificado no disponible"
-          descripcion="Solo se emite certificado para las capacitaciones aprobadas."
-          accion={
-            <Link to="/mis-cursos" className="btn-secondary">
-              Volver
-            </Link>
-          }
-        />
-      </Card>
+      <PaginaPublica>
+        <Card>
+          <Vacio
+            titulo="Certificado no disponible"
+            descripcion="El enlace no corresponde a una capacitación aprobada, o no existe en esta demo."
+            accion={
+              <Link to="/certificados" className="btn-secondary">
+                Consultar por DNI
+              </Link>
+            }
+          />
+        </Card>
+      </PaginaPublica>
     )
   }
 
@@ -38,7 +44,7 @@ export default function Certificado() {
     typeof window !== 'undefined' ? `${window.location.origin}/certificado/${asignacion.id}` : codigo
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <PaginaPublica>
       <div className="no-print flex items-center justify-between gap-3 mb-4">
         <button onClick={() => navigate(-1)} className="btn-ghost -ml-2 text-sm">
           <IcoVolver size={16} />
@@ -134,6 +140,6 @@ export default function Certificado() {
       <p className="no-print text-xs text-slate-400 text-center mt-4">
         Vista imprimible: desde el diálogo de impresión se puede guardar como PDF.
       </p>
-    </div>
+    </PaginaPublica>
   )
 }

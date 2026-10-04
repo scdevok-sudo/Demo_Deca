@@ -1,9 +1,15 @@
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useApp } from '../store/AppStore'
-import { Aviso, Card, ChipEstado, Encabezado, IcoMas, IcoVolver, Vacio } from '../components/ui'
-import { estadoEmpleado } from '../lib/calculos'
-import { fmtLarga } from '../lib/fechas'
+import { Aviso, Card, Chip, ChipEstado, Encabezado, IcoCert, IcoMas, IcoVolver, Vacio } from '../components/ui'
+import { estadoAsignacion, estadoEmpleado, vencimientoCapacitacion } from '../lib/calculos'
+import { fmtCorta, fmtLarga } from '../lib/fechas'
+
+const ETIQUETA_CERT = {
+  al_dia: { texto: 'Vigente', tono: 'verde' },
+  por_vencer: { texto: 'Por vencer', tono: 'ambar' },
+  vencido: { texto: 'Vencido', tono: 'rojo' },
+}
 
 export default function PersonalDetalle() {
   const { id } = useParams()
@@ -90,6 +96,15 @@ export default function PersonalDetalle() {
   }
 
   const resumen = existente ? estadoEmpleado(existente, asignaciones, cursos) : null
+
+  // Módulo 7: historial de certificados de esta persona, consultable desde
+  // Personal por Gerente y Capacitador (el Operario los ve en Mis
+  // certificados, o sin login en /certificados por DNI).
+  const certificados = existente
+    ? asignaciones
+        .filter((a) => a.empleadoId === existente.id && a.aprobado && a.certificadoId)
+        .sort((a, b) => String(b.fechaCompletado).localeCompare(String(a.fechaCompletado)))
+    : []
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -225,6 +240,34 @@ export default function PersonalDetalle() {
             <div className="mt-2">
               <ChipEstado estado={resumen.estado} />
             </div>
+          )}
+
+          {certificados.length > 0 && (
+            <ul className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+              {certificados.map((a) => {
+                const curso = cursos.find((c) => c.id === a.cursoId)
+                const sit = estadoAsignacion(a, curso)
+                const et = ETIQUETA_CERT[sit] ?? ETIQUETA_CERT.al_dia
+                const vence = vencimientoCapacitacion(a, curso)
+                return (
+                  <li key={a.id}>
+                    <Link
+                      to={`/certificado/${a.id}`}
+                      className="flex items-center gap-2.5 rounded-md border border-slate-200 px-2.5 py-2 hover:border-brand-300 hover:bg-brand-50/40 transition-colors"
+                    >
+                      <IcoCert size={16} className="text-brand-600 shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-slate-800 truncate">{curso?.nombre}</p>
+                        <p className="text-[11px] text-slate-400">
+                          Emitido {fmtCorta(a.fechaCompletado)} · vence {fmtCorta(vence)}
+                        </p>
+                      </div>
+                      <Chip tono={et.tono}>{et.texto}</Chip>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
           )}
         </Card>
       )}

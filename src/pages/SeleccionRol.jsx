@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { EMPRESA, PRODUCTO } from '../config/empresa'
 import LogoEmpresa from './../components/LogoEmpresa'
 import PieMarca from './../components/PieMarca'
@@ -177,6 +177,13 @@ export default function SeleccionRol() {
                   </button>
                 ))}
               </div>
+
+              <p className="text-center text-xs text-slate-400 mt-5">
+                ¿Sos empleado y querés ver tus certificados sin iniciar sesión?{' '}
+                <Link to="/certificados" className="font-semibold text-brand-700 hover:underline">
+                  Consultar por DNI
+                </Link>
+              </p>
             </>
           )}
 
