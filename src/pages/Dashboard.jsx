@@ -6,6 +6,8 @@ import {
   Card,
   Chip,
   ChipEstado,
+  Columnas,
+  Donut,
   Encabezado,
   IcoAlerta,
   IcoCert,
@@ -31,6 +33,10 @@ export default function Dashboard() {
     proximoVencimiento,
     certificadosMes,
     coberturaCursos,
+    distribucionPersonal,
+    distribucionEquipos,
+    cumplimientoPorPuesto,
+    tendenciaCertificados,
   } = kpis
 
   const tonoCumplimiento = pctAlDia >= 80 ? 'verde' : pctAlDia >= 50 ? 'ambar' : 'rojo'
@@ -83,6 +89,22 @@ export default function Dashboard() {
           tono="verde"
           icono={<IcoCert size={18} />}
         />
+      </div>
+
+      {/* ------------------------------------------------- Panorama general - */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 mb-5">
+        <Card titulo="Estado del personal">
+          <Donut datos={distribucionPersonal} />
+        </Card>
+        <Card titulo="Estado de equipos">
+          <Donut datos={distribucionEquipos} />
+        </Card>
+        <Card
+          titulo="Certificados emitidos"
+          accion={<span className="text-xs text-slate-500">Últimos 6 meses</span>}
+        >
+          <Columnas datos={tendenciaCertificados} />
+        </Card>
       </div>
 
       {/* ------------------------------------------- Alerta no conformes -- */}
@@ -202,25 +224,46 @@ export default function Dashboard() {
           </TablaScroll>
         </Card>
 
-        {/* ----------------------------------------- Cobertura por curso -- */}
-        <Card titulo="Cobertura por curso">
-          <ul className="space-y-4">
-            {coberturaCursos.map((c) => (
-              <li key={c.curso.id}>
-                <div className="flex items-baseline justify-between gap-2 mb-1.5">
-                  <p className="text-sm font-medium text-slate-800 leading-tight">{c.curso.nombre}</p>
-                  <p className="text-xs tabular-nums text-slate-500 shrink-0">
-                    {c.vigentes}/{c.asignados}
+        {/* --------------------------------------- Puesto / curso (panel) - */}
+        <div className="flex flex-col gap-5">
+          {/* --------------------------------------- Cumplimiento por puesto - */}
+          <Card titulo="Cumplimiento por puesto">
+            <ul className="space-y-4">
+              {cumplimientoPorPuesto.map((p) => (
+                <li key={p.puesto}>
+                  <div className="flex items-baseline justify-between gap-2 mb-1.5">
+                    <p className="text-sm font-medium text-slate-800 leading-tight">{p.puesto}</p>
+                    <p className="text-xs tabular-nums text-slate-500 shrink-0">
+                      {p.alDia}/{p.total}
+                    </p>
+                  </div>
+                  <Barra pct={p.pct} tono={p.pct >= 80 ? 'verde' : p.pct >= 50 ? 'ambar' : 'rojo'} />
+                  <p className="text-[11px] text-slate-400 mt-1">{p.pct}% al día</p>
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          {/* ----------------------------------------- Cobertura por curso -- */}
+          <Card titulo="Cobertura por curso">
+            <ul className="space-y-4">
+              {coberturaCursos.map((c) => (
+                <li key={c.curso.id}>
+                  <div className="flex items-baseline justify-between gap-2 mb-1.5">
+                    <p className="text-sm font-medium text-slate-800 leading-tight">{c.curso.nombre}</p>
+                    <p className="text-xs tabular-nums text-slate-500 shrink-0">
+                      {c.vigentes}/{c.asignados}
+                    </p>
+                  </div>
+                  <Barra pct={c.pct} tono={c.pct >= 80 ? 'verde' : c.pct >= 50 ? 'ambar' : 'rojo'} />
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Vigencia {c.curso.vigenciaMeses} meses · {c.pct}% vigente
                   </p>
-                </div>
-                <Barra pct={c.pct} tono={c.pct >= 80 ? 'verde' : c.pct >= 50 ? 'ambar' : 'rojo'} />
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Vigencia {c.curso.vigenciaMeses} meses · {c.pct}% vigente
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Card>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
       </div>
 
       {/* ---------------------------------------------------- Equipos ---- */}

@@ -1,4 +1,4 @@
-import { TONOS } from '../lib/calculos'
+import { TONOS, TONOS_HEX } from '../lib/calculos'
 
 /* --------------------------------------------------------------- Chip ---- */
 export function Chip({ tono = 'gris', children, punto = true, className = '' }) {
@@ -78,6 +78,91 @@ export function Barra({ pct, tono = 'verde' }) {
   return (
     <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
       <div className={`h-full rounded-full ${t.barra}`} style={{ width: `${Math.min(100, Math.max(0, pct))}%` }} />
+    </div>
+  )
+}
+
+/* -------------------------------------------------------------- Donut ---- */
+// `datos`: [{ estado: { clave, texto, tono }, cantidad }, ...] — el shape que
+// devuelve `distribucionPorEstado`. Dibuja el anillo a mano con <circle> +
+// stroke-dasharray (nada de librería de gráficos) y una leyenda al lado con
+// punto + etiqueta + cantidad, así la identidad nunca depende solo del color.
+export function Donut({ datos, size = 132, grosor = 18 }) {
+  const total = datos.reduce((acc, d) => acc + d.cantidad, 0)
+  const r = (size - grosor) / 2
+  const c = size / 2
+  const circunferencia = 2 * Math.PI * r
+  const conValor = datos.filter((d) => d.cantidad > 0)
+
+  let acumulado = 0
+  const arcos = conValor.map((d) => {
+    const largo = (d.cantidad / total) * circunferencia
+    const gap = conValor.length > 1 ? 3 : 0
+    const el = (
+      <circle
+        key={d.estado.clave}
+        r={r}
+        cx={c}
+        cy={c}
+        fill="none"
+        stroke={TONOS_HEX[d.estado.tono] ?? TONOS_HEX.gris}
+        strokeWidth={grosor}
+        strokeDasharray={`${Math.max(largo - gap, 0)} ${circunferencia}`}
+        strokeDashoffset={-acumulado}
+        strokeLinecap="round"
+      />
+    )
+    acumulado += largo
+    return el
+  })
+
+  return (
+    <div className="flex flex-wrap items-center gap-5">
+      <div className="relative shrink-0" style={{ width: size, height: size }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+          <circle r={r} cx={c} cy={c} fill="none" stroke="#e2e8f0" strokeWidth={grosor} />
+          {total > 0 && arcos}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-2xl font-semibold text-slate-900 tabular-nums">{total}</span>
+          <span className="text-[11px] text-slate-400">total</span>
+        </div>
+      </div>
+      <ul className="space-y-1.5 min-w-[140px] flex-1">
+        {conValor.map((d) => (
+          <li key={d.estado.clave} className="flex items-center gap-2 text-sm">
+            <span className={`h-2 w-2 rounded-full shrink-0 ${(TONOS[d.estado.tono] ?? TONOS.gris).punto}`} />
+            <span className="text-slate-600 flex-1">{d.estado.texto}</span>
+            <span className="font-medium text-slate-900 tabular-nums">{d.cantidad}</span>
+          </li>
+        ))}
+        {conValor.length === 0 && <li className="text-sm text-slate-400">Sin datos.</li>}
+      </ul>
+    </div>
+  )
+}
+
+/* ----------------------------------------------------------- Columnas ---- */
+// `datos`: [{ mes, etiqueta, cantidad }, ...] — el shape de
+// `tendenciaCertificados`. Serie única (sin leyenda, el título de la Card ya
+// dice qué se mide), con el valor arriba de cada columna porque son pocos
+// puntos (6 meses) y el número exacto importa más que la silueta.
+export function Columnas({ datos }) {
+  const max = Math.max(1, ...datos.map((d) => d.cantidad))
+  return (
+    <div className="flex items-end gap-2">
+      {datos.map((d) => (
+        <div key={d.mes} className="flex-1 flex flex-col items-center gap-1.5">
+          <span className="text-xs font-medium text-slate-700 tabular-nums h-4">{d.cantidad || ''}</span>
+          <div className="w-full h-24 flex items-end" title={`${d.etiqueta}: ${d.cantidad} certificado(s)`}>
+            <div
+              className="w-full max-w-[28px] mx-auto rounded-t-md bg-brand-500"
+              style={{ height: `${Math.max(d.cantidad ? 6 : 0, (d.cantidad / max) * 100)}%` }}
+            />
+          </div>
+          <span className="text-[11px] text-slate-400">{d.etiqueta}</span>
+        </div>
+      ))}
     </div>
   )
 }

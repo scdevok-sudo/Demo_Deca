@@ -56,6 +56,18 @@ export const TONOS = {
   },
 }
 
+// Mismos colores que TONOS pero en hex, para los gráficos del dashboard
+// (donuts en SVG), donde hace falta un valor de color real y no una clase
+// de Tailwind. Alineado a mano con los mismos tonos de Tailwind que usa
+// `punto`/`barra` arriba (emerald-500, amber-500, red-500, slate-400) para
+// que un gráfico y un Chip/Barra de al lado queden siempre del mismo color.
+export const TONOS_HEX = {
+  verde: '#10b981',
+  ambar: '#f59e0b',
+  rojo: '#ef4444',
+  gris: '#94a3b8',
+}
+
 // --------------------------------------------------------- CAPACITACIONES --
 
 /** Fecha en la que vence una capacitación aprobada. */
@@ -308,6 +320,65 @@ export function resumenComunicaciones(comunicaciones = []) {
   }
 }
 
+// --------------------------------------------------- GRÁFICOS DEL DASHBOARD -
+// Agregaciones puntuales para los gráficos del Dashboard (Juan pidió más
+// estadísticas visuales para mostrarle a Deca). Todas se calculan sobre los
+// mismos datos que ya alimentan las tablas — no hay ningún dato nuevo acá,
+// solo otra forma de agruparlos.
+
+/**
+ * Agrupa un listado con `.estado` (porEmpleado o porEquipo) por estado y
+ * cuenta cuántos hay en cada uno. Alimenta los donuts del dashboard.
+ */
+export function distribucionPorEstado(filas) {
+  const mapa = new Map()
+  filas.forEach(({ estado }) => {
+    if (!mapa.has(estado.clave)) mapa.set(estado.clave, { estado, cantidad: 0 })
+    mapa.get(estado.clave).cantidad++
+  })
+  return [...mapa.values()].sort((a, b) => b.cantidad - a.cantidad)
+}
+
+/**
+ * % de personal "al día" por puesto — para ver de un vistazo en qué puesto
+ * está el problema, no solo el número general. Ordenado de peor a mejor
+ * (lo que más necesita atención, primero).
+ */
+export function cumplimientoPorPuesto(porEmpleado) {
+  const mapa = new Map()
+  porEmpleado.forEach((p) => {
+    const puesto = p.empleado.puesto
+    if (!mapa.has(puesto)) mapa.set(puesto, { puesto, total: 0, alDia: 0 })
+    const grupo = mapa.get(puesto)
+    grupo.total++
+    if (p.estado.clave === 'al_dia') grupo.alDia++
+  })
+  return [...mapa.values()]
+    .map((g) => ({ ...g, pct: g.total ? Math.round((g.alDia / g.total) * 100) : 0 }))
+    .sort((a, b) => a.pct - b.pct)
+}
+
+const MESES_ABR = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+/**
+ * Certificados (aprobados) emitidos por mes, los últimos `meses` meses
+ * incluyendo el actual. Mismo criterio que `certificadosMes` y que el
+ * Reporte Mensual (módulo 9) — nada nuevo, solo la serie en el tiempo.
+ */
+export function tendenciaCertificados(asignaciones, meses = 6) {
+  const hoy = new Date()
+  const puntos = []
+  for (let i = meses - 1; i >= 0; i--) {
+    const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1)
+    const mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    const cantidad = asignaciones.filter(
+      (a) => a.estado === 'completado' && a.aprobado && mismoMes(a.fechaCompletado, `${mes}-01`)
+    ).length
+    puntos.push({ mes, etiqueta: MESES_ABR[d.getMonth()], cantidad })
+  }
+  return puntos
+}
+
 // ------------------------------------------------------------------ KPIs ---
 
 export function calcularKPIs({
@@ -392,6 +463,11 @@ export function calcularKPIs({
     coberturaCursos,
     totalEmpleados: empleados.length,
     totalEquipos: equipos.length,
+    // --- Gráficos del dashboard
+    distribucionPersonal: distribucionPorEstado(porEmpleado),
+    distribucionEquipos: distribucionPorEstado(porEquipo),
+    cumplimientoPorPuesto: cumplimientoPorPuesto(porEmpleado),
+    tendenciaCertificados: tendenciaCertificados(asignaciones),
     // --- Módulos nuevos
     ops: resumenOps(ops),
     rankingOps: rankingOps(ops, empleados),

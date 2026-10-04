@@ -335,6 +335,21 @@ export const ASIGNACIONES_SEED = [
   // Brian Maidana (ingreso reciente) — dos cursos pendientes
   asignacion('ASG-016', 'CUR-01', 'EMP-06', 3, null),
   asignacion('ASG-017', 'CUR-02', 'EMP-06', 3, null),
+
+  // Dictados de este mes — para que el Reporte Mensual (módulo 9) y el
+  // gráfico de certificados del Dashboard tengan contenido real para
+  // mostrarle a Deca/YPF sin esperar a que se complete un mes entero.
+  // "Manejo de extintores" dictado a un grupo de 3 (incluye un desaprobado,
+  // para que el reporte no muestre solo resultados perfectos).
+  // hace: valores chicos a propósito (0-2 días) para que, sea cual sea el
+  // día del mes en que se mire la demo, estos registros caigan dentro del
+  // mes en curso — si usaran "hace 4 días" se corre el riesgo de que a
+  // principios de mes caigan en el mes anterior (como pasó al probarlo).
+  asignacion('ASG-018', 'CUR-04', 'EMP-02', 4, { hace: 2, puntaje: 100 }),
+  asignacion('ASG-019', 'CUR-04', 'EMP-05', 3, { hace: 1, puntaje: 50 }),
+  asignacion('ASG-020', 'CUR-04', 'EMP-06', 2, { hace: 1, puntaje: 100 }),
+  // Nicolás Ferreyra rindió la recertificación de "Trabajo en altura".
+  asignacion('ASG-021', 'CUR-03', 'EMP-04', 1, { hace: 0, puntaje: 100 }),
 ]
 
 // --------------------------------------------------------- INSPECCIONES ----
